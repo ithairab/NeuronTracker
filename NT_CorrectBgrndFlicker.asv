@@ -1,0 +1,23 @@
+function CorrectedBgrnd = NT_CorrectBgrndFlicker(Bgrnd)
+
+CorrectedBgrnd = [];
+NBins = 3; % 3 is preferable
+MidBinInd = 2:NBins-1;
+AbsDiffBgrnd = abs(diff(Bgrnd));
+Count = hist(AbsDiffBgrnd, NBins);
+% check if background trace flickers (there should be a clear separation
+% between small differences from frame to frame and huge ones, the latter
+% being a very small fraction of frame differences)
+Mid = max(AbsDiffBgrnd) - min
+if ~any(Count(MidBinInd))
+    if Count(1)>Count(NBins)
+        FlickInd = find(AbsDiffBgrnd>median(AbsDiffBgrnd));
+    else
+        FlickInd = find(AbsDiffBgrnd<median(AbsDiffBgrnd));
+    end
+    figure(1)
+    hold off
+    plot(Bgrnd)
+    hold on
+    plot(FlickInd, Bgrnd(FlickInd), 'r.')
+end
